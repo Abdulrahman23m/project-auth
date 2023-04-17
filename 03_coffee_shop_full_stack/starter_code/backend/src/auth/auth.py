@@ -1,5 +1,5 @@
 import json
-from flask import request, _request_ctx_stack
+from flask import abort, request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
@@ -76,7 +76,15 @@ def get_token_auth_header():
     return true otherwise
 '''
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
+    if 'permissions' not in payload:
+        abort(400)
+
+    if permission not in payload['permissions']:
+        raise AuthError({
+            'code': 'unauthorized',
+            'description': 'Permissions not found',
+        }, 401)
+    return True
 
 '''
 @TODO implement verify_decode_jwt(token) method
@@ -93,8 +101,10 @@ def check_permissions(permission, payload):
 '''
 
 def verify_decode_jwt(token):
+    print(token)
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
+    print(jsonurl)
     unverified_header = jwt.get_unverified_header(token)
     rsa_key = {}
     if 'kid' not in unverified_header:
@@ -159,6 +169,7 @@ def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
+            print('hi')
             token = get_token_auth_header()
             payload = verify_decode_jwt(token)
             print(payload)

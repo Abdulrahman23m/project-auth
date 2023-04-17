@@ -5,7 +5,8 @@ import json
 
 database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
+database_path = 'sqlite:///C:/Users/ABDULRAHMAN/Desktop/auth udacity/project auth/cd0039-Identity-and-Access-Management/Project/03_coffee_shop_full_stack/starter_code/backend/src/database/database.db'
+print(database_path)
 
 db = SQLAlchemy()
 
